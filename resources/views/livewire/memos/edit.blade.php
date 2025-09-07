@@ -4,10 +4,7 @@ use function Livewire\Volt\{state, rules, mount};
 use App\Models\Memo;
 
 // 状態定義
-state([
-    'title' => '',
-    'body' => '',
-]);
+state(['memo', 'title' => '', 'body' => '']);
 
 // バリデーションルール
 rules([
@@ -15,23 +12,34 @@ rules([
     'body' => 'required|max:2000',
 ]);
 
-// 作成処理
-$save = function () {
+// 初期化処理
+mount(function (Memo $memo) {
+    // 認可チェック（自分のメモかどうか）
+    if ($memo->user_id !== auth()->id()) {
+        abort(403);
+    }
+
+    $this->memo = $memo;
+    $this->title = $memo->title;
+    $this->body = $memo->body;
+});
+
+// 更新処理
+$update = function () {
     // バリデーション実行
     $this->validate();
 
-    // メモ作成
-    $memo = Memo::create([
-        'user_id' => auth()->id(),
+    // メモ更新
+    $this->memo->update([
         'title' => $this->title,
         'body' => $this->body,
     ]);
 
     // 成功メッセージ
-    session()->flash('message', 'メモを作成しました。');
+    session()->flash('message', 'メモを更新しました。');
 
     // メモ詳細画面にリダイレクト
-    return redirect()->route('memos.show', $memo);
+    return redirect()->route('memos.show', $this->memo);
 };
 
 ?>
@@ -43,8 +51,11 @@ $save = function () {
                 <!-- ヘッダー -->
                 <div class="mb-6">
                     <h1 class="text-3xl font-bold text-gray-900">
-                        新しいメモを作成
+                        メモを編集
                     </h1>
+                    <p class="mt-2 text-sm text-gray-600">
+                        作成日: {{ $memo->created_at->format('Y年m月d日 H:i') }}
+                    </p>
                 </div>
 
                 <!-- 成功メッセージ -->
@@ -55,7 +66,7 @@ $save = function () {
                 @endif
 
                 <!-- フォーム -->
-                <form wire:submit="save" class="space-y-6">
+                <form wire:submit="update" class="space-y-6">
                     <!-- タイトル入力 -->
                     <div>
                         <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
@@ -105,17 +116,17 @@ $save = function () {
                     <!-- ボタン群 -->
                     <div class="flex items-center justify-between border-t pt-6">
                         <!-- キャンセルボタン -->
-                        <a href="{{ route('memos.index') }}"
+                        <a href="{{ route('memos.show', $memo) }}"
                             class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                             キャンセル
                         </a>
 
-                        <!-- 作成ボタン -->
+                        <!-- 更新ボタン -->
                         <button type="submit"
                             class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:opacity-50"
                             wire:loading.attr="disabled">
-                            <span wire:loading.remove>作成</span>
-                            <span wire:loading>作成中...</span>
+                            <span wire:loading.remove>更新</span>
+                            <span wire:loading>更新中...</span>
                         </button>
                     </div>
                 </form>

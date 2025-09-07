@@ -33,6 +33,13 @@ mount(function () {
                     </a>
                 </div>
 
+                <!-- 成功メッセージ -->
+                @if (session('message'))
+                    <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                        {{ session('message') }}
+                    </div>
+                @endif
+
                 @if ($memos->count() > 0)
                     <!-- メモ一覧 -->
                     <div class="space-y-4">
