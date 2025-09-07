@@ -17,6 +17,12 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
     Volt::route('settings/password', 'settings.password')->name('settings.password');
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
+
+    // メモ関連画面
+    Volt::route('memos', 'memos.index')->name('memos.index');
+    Volt::route('memos/create', 'memos.create')->name('memos.create');
+    Volt::route('memos/{memo}', 'memos.show')->name('memos.show');
+    Volt::route('memos/{memo}/edit', 'memos.edit')->name('memos.edit');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
