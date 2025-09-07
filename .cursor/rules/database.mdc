@@ -6,4 +6,33 @@ alwaysApply: true
 
 ## テーブル定義
 
-## シーディング
+
+### memosテーブル
+
+#### カラム定義
+
+| カラム名 | データ型 | NULL | キー | 説明 |
+|----------|----------|------|------|------|
+| id | BIGINT UNSIGNED | NO | PK | 主キー |
+| user_id | BIGINT UNSIGNED | NO | FK | ユーザーID |
+| title | VARCHAR(255) | NO | - | メモのタイトル |
+| body | TEXT | NO | - | メモの本文 |
+| created_at | TIMESTAMP | YES | - | 作成日時 |
+| updated_at | TIMESTAMP | YES | - | 更新日時 |
+
+#### リレーション
+
+| 関連テーブル | 関係 | 削除時の動作 |
+|--------------|------|--------------|
+| users | 1対多 | CASCADE |
+  
+  ## シーディング
+  
+### サンプルデータ
+
+| id | タイトル | 内容 |
+|-|-|-|
+| 1 | PHP | PHPは、Hypertext Preprocessorの略です。 |
+| 2 | HTML | HTMLは、Hypertext Markup Languageの略です。 |
+| 3 | CSS | CSSは、\nCascading Style Sheets\nの略です。 |
+| 4 | 混在 | Test123 てすとアイウエオｱｲｳｴｵ\n漢字！ＡＢＣ ａｂｃ １２３   😊✨ |
